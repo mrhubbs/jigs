@@ -17,7 +17,7 @@
     "metalsmith-debug": "^1.2.0",
     "metalsmith-ignore": "^0.1.2",
     "metalsmith-in-place": "^4.2.0",
-    "metalsmith-layouts": "^2.1.0",
+    "metalsmith-layouts": "^2.2.0",
     "metalsmith-postcss": "^4.2.0",
     "metalsmith-watch": "^1.0.3",
     "postcss": "^7.0.2",
