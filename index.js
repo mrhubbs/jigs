@@ -4,9 +4,8 @@ const path = require('path');
 
 const metalsmith = require('metalsmith');
 const assets = require('metalsmith-assets');
-const markdown = require('metalsmith-markdown');
+const inPlace = require('metalsmith-in-place');
 const layouts = require('metalsmith-layouts');
-const rename = require('metalsmith-rename');
 const ignore = require('metalsmith-ignore');
 const postcss = require('metalsmith-postcss');
 const watch = require('metalsmith-watch');
@@ -31,7 +30,7 @@ const forgeBaseForge = () => {
     .metadata(config.metadata)
     .source(config.dirs.source)
     .destination(config.dirs.build)
-    // .use(debug());
+    .use(debug());
 }
 
 // makes a forge for everything but CSS: HTML, markdown, templates, assets, etc.
@@ -43,17 +42,24 @@ const forgeNonCssForge = () => {
       source: config.dirs.assets,
       destination: config.dirs.assets
     }))
-    .use(markdown())
+    .use(inPlace({
+      suppressNoFilesError: mode === 'prototype',
+      engineOptions: {
+        pattern: '{**/*.ejs}',
+        // So we don't have to write relative paths to the includes
+        views: [path.resolve(config.dirs.includes)]
+      }
+    }))
     .use(layouts({
       directory: config.dirs.layouts,
       default: config.layouts.default || 'basepage.ejs',
       pattern: ['**/*.ejs', '**/*.md', '**/*.html', '*.ejs', '*.md', '*.html'],
-      suppressNoFilesError: mode === 'prototype'
-    }))
-    .use(rename([
-      [/\.ejs$/, '.html'],
-      [/\.md$/, '.html']
-    ]));
+      suppressNoFilesError: mode === 'prototype',
+      engineOptions: {
+        // So we don't have to write relative paths to the includes
+        views: [path.resolve(config.dirs.includes)]
+      }
+    }));
 }
 
 const forgeCssOnlyForge = () => {
@@ -121,6 +127,7 @@ if (mode == 'build') {
         [config.dirs.source + '/**/*']: true,
         [config.dirs.assets + '/**/*']: true,
         // TODO: auto-rebuild if layouts change
+        // TODO: auto-rebuild if includes change
         // Enabling this option just causes metalsmith to try to render the
         // layouts, instead of the pages that use them.
         // [config.dirs.layouts + '/**/*']: true
@@ -149,7 +156,8 @@ if (mode == 'build') {
         },
         server: {
           baseDir: serveDir,
-        }
+        },
+        open: false
       });
     });
 } else {
