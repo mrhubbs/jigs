@@ -21,7 +21,9 @@ module.exports = (dirs, disabledPlugins) => {
   let config = {
     plugins: [
       {
-        'postcss-import': {
+        // TODO: @import is not working...
+        'postcss-easy-import': {
+          // TODO: this function doesn't seem to be getting called
           onImport: function(sources) {
             global.watchCSS(sources);
           }

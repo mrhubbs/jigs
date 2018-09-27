@@ -13,12 +13,17 @@ const debug = require('metalsmith-debug');
 
 const browserSync = require('browser-sync');
 
+const { logSuccess, logInfo, logFailure } = require('./lib/logging');
+
 const postcss_config = require(path.join(__dirname, 'postcss.config.js'));
 
 // Determine run mode from CLI
 let mode = process.argv[2];
-if (mode !== 'build' && mode !== 'prototype') {
+if (mode === undefined) {
   mode = 'prototype';
+} else if (mode !== 'build' && mode !== 'prototype') {
+  logFailure(`Unknown mode "${mode}"`);
+  process.exit(1);
 }
 
 const config = require(path.resolve('./forge.config.js'));
@@ -45,7 +50,7 @@ const forgeNonCssForge = () => {
     .use(inPlace({
       suppressNoFilesError: mode === 'prototype',
       engineOptions: {
-        pattern: '{**/*.ejs}',
+        pattern: ['**/*.ejs', '**/*.md'],
         // So we don't have to write relative paths to the includes
         views: [path.resolve(config.dirs.includes)]
       }
@@ -91,17 +96,21 @@ if (mode == 'build') {
 
   // build HTML + JS + assets + whatever else, but not CSS
   theForge
+    .use(ignore([
+      // Ignore all CSS. We'll leave that for the CSS forge.
+      '**/*.css'
+    ]))
     .build(function(err) {
       if (err) throw err;
 
-      console.log('Built HTML + JS + assets!');
+      logSuccess('Built HTML + JS + assets');
 
       // build CSS
       forgeCssOnlyForge()
         .build(function(err) {
           if (err) throw err;
 
-          console.log('Built CSS!');
+          logSuccess('Built CSS');
         })
     })
 } else if (mode == 'prototype') {
@@ -110,14 +119,16 @@ if (mode == 'build') {
   // add postcss, disabling the plugins that don't play well with prototyping
   theForge
     .use(
-      postcss(
-        postcss_config(
+      postcss({
+        ...postcss_config(
           config.dirs, {
             'postcss-purgecss': false,
             'postcss-clean': false
           }
-        )
-      )
+        ),
+        // load only the main css file; it will import the others
+        pattern: 'main.css'
+      })
     );
 
   // set up the forge to watch
@@ -138,7 +149,7 @@ if (mode == 'build') {
     .build(function(err) {
       if (err) throw err;
 
-      console.log('Prototyping started!');
+      logInfo('Prototyping started');
 
       // Start browser-sync once the initial build has completed
       const serveDir = path.join(process.cwd(), config.dirs.build);
@@ -160,6 +171,4 @@ if (mode == 'build') {
         open: false
       });
     });
-} else {
-  throw new Error(`Unrecognized mode ${mode}`);
 }

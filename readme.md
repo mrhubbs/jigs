@@ -37,10 +37,10 @@ Write this to a file named `forge`:
 ```shell
 #!/bin/sh
 
-FORGE_PATH=~/path/to/where/you/put/forge
+FORGE_PATH=~/desk2/forge
 RUN_CMD=nodemon
 
-if [ "${1}" == "build" ]; then
+if [ "${1}" != "prototype" ]; then
   RUN_CMD=node
 fi
 
@@ -78,3 +78,5 @@ module.exports = {
 ## To-do
 
 1. Create a mechanism in prototype mode to inject file changes if dependencies change. Use this to re-process the source files if the layouts or includes change, or to re-process the CSS if the tailwind file changes.
+1. Prevent metalsmith-in-place from looking at every file - it seems to be ignoring it's pattern option.
+1. Can maybe regenerate CSS when tailwind.js changes in a smoother, faster way. Consider having nodemon ignore tailwind.js. Watch that file. When it changes clear it and the postcss config file from the cache. Re-require the postcss config file, re-create the metalsmith plugin, update the plugin in the metalsmith object, and fake a change to all CSS files so the CSS get's regenerated.
