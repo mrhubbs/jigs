@@ -1,7 +1,6 @@
 // Run this from the project directory. E.g. the repo of the website being built.
 
 const path = require('path');
-
 const metalsmith = require('metalsmith');
 const assets = require('metalsmith-assets');
 const inPlace = require('metalsmith-in-place');
@@ -10,6 +9,7 @@ const ignore = require('metalsmith-ignore');
 const postcss = require('metalsmith-postcss');
 const watch = require('metalsmith-watch');
 const debug = require('metalsmith-debug');
+const webpack = require('metalsmith-webpack');
 
 const browserSync = require('browser-sync');
 
@@ -26,9 +26,7 @@ if (mode === undefined) {
   process.exit(1);
 }
 
-const config = require(path.resolve('./forge.config.js'));
-if (config.layouts === undefined) config.layouts = { };
-// TODO: validate `config`
+const config = require(path.join(__dirname, './lib/config')).load();
 
 const forgeBaseForge = () => {
   return metalsmith(process.cwd())
@@ -38,9 +36,9 @@ const forgeBaseForge = () => {
     .use(debug());
 }
 
-// makes a forge for everything but CSS: HTML, markdown, templates, assets, etc.
+// makes a forge for everything but CSS: HTML, markdown, templates, assets, JS, etc.
 const forgeNonCssForge = () => {
-  return forgeBaseForge()
+  let b = forgeBaseForge()
     .clean(true)
     // plugins
     .use(assets({
@@ -65,6 +63,16 @@ const forgeNonCssForge = () => {
         views: [path.resolve(config.dirs.includes)]
       }
     }));
+
+    // if the the code section of the config is populated, we'll use webpack
+    // to handle the code-bundling
+    if (config.code !== undefined) {
+      b.use(webpack(
+        require(path.join(__dirname, 'webpack.config.js'))(config)
+      ));
+    }
+
+    return b;
 }
 
 const forgeCssOnlyForge = () => {
@@ -98,7 +106,7 @@ if (mode == 'build') {
   theForge
     .use(ignore([
       // Ignore all CSS. We'll leave that for the CSS forge.
-      '**/*.css'
+      '**/*.css',
     ]))
     .build(function(err) {
       if (err) throw err;
