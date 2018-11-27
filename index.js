@@ -12,6 +12,7 @@ const watch = require('metalsmith-watch');
 const debug = require('metalsmith-debug');
 
 const browserSync = require('browser-sync');
+const hljs = require('highlight.js');
 
 const { logSuccess, logInfo, logFailure } = require('./lib/logging');
 
@@ -52,7 +53,27 @@ const forgeNonCssForge = () => {
       engineOptions: {
         pattern: ['**/*.ejs', '**/*.md'],
         // So we don't have to write relative paths to the includes
-        views: [path.resolve(config.dirs.includes)]
+        views: [path.resolve(config.dirs.includes)],
+        // options for jstransformer-markdown-it
+        // enable: [ 'breaks' ]
+        plugins: [
+          // subscripts surrounded by ~ ~
+          'markdown-it-sub',
+          // suberscrips surrounded by ^ ^
+          'markdown-it-sup'
+        ],
+        breaks: true,
+        // TODO: smartypants quotes
+        // apply syntax highlighting to fenced code blocks
+        highlight: function (str, lang) {
+          if (lang && hljs.getLanguage(lang)) {
+            try {
+              return hljs.highlight(lang, str).value;
+            } catch (__) { }
+          }
+
+          return ''  // use external default escaping
+        }
       }
     }))
     .use(layouts({

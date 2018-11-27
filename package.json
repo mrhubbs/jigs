@@ -12,9 +12,11 @@
     "autoprefixer": "^9.1.5",
     "browser-sync": "^2.24.7",
     "colorette": "^1.0.4",
+    "highlight.js": "^9.13.1",
     "jstransformer-ejs": "^0.2.0",
-    "jstransformer-markdown": "^1.2.1",
-    "ssh2-sftp-client": "^3.1.0",
+    "jstransformer-markdown-it": "^2.1.0",
+    "markdown-it-sub": "^1.0.0",
+    "markdown-it-sup": "^1.0.0",
     "metalsmith": "^2.3.0",
     "metalsmith-assets": "^0.1.0",
     "metalsmith-debug": "^1.2.0",
@@ -31,6 +33,7 @@
     "postcss-nested": "^3.0.0",
     "postcss-purgecss": "^1.0.0",
     "postcss-simple-vars": "^4.1.0",
+    "ssh2-sftp-client": "^3.1.0",
     "tailwindcss": "^0.6.5"
   }
 }
