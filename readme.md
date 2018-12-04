@@ -80,6 +80,8 @@ module.exports = {
 
   1. Move CSS processing to Webpack.
 
+  1. Move the base Webpack config into forge. Figure out how to extend it in the project directories. Figure out *what* kinds of things should be changed and what kind of interface for changing would be *nice*.
+
   1. Create a mechanism in prototype mode to inject file changes if dependencies change. Use this to re-process the source files if the layouts or includes change, or to re-process the CSS if the tailwind file changes.
 
   1. Prevent metalsmith-in-place from looking at every file - it seems to be ignoring it's pattern option.

@@ -1,6 +1,14 @@
 
+const path = require('path')
+
 // Determine run mode from CLI
 let mode = process.argv[2];
+
+// We have a lot of tooling installed in the forge directory's node_modules
+// folder. However, unlike usual tooling, we run from a different directory (the
+// project's). So we add to the NODE_PATH so we can find all the tooling.
+process.env.NODE_PATH = path.resolve(path.join(__dirname, 'node_modules'))
+require("module").Module._initPaths()
 
 // initialize a new project
 // (do this before anything else because we try to load a config below, and a
