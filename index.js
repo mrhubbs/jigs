@@ -34,6 +34,7 @@ const config = require('./lib/config').load();
 const builder = require('./lib/metalsmith-builder')
 const webpacker = require('./lib/webpacker')
 const browserSyncer = require('./lib/browserSyncer')
+const ePackager = require('./lib/e--packager')
 
 if (mode === 'build') {
   builder.build(config)
@@ -45,6 +46,8 @@ if (mode === 'build') {
   builder.prototype(config, () => {
     browserSyncer.start(config, webpacker.middleware)
   })
+} else if (mode === 'pkg-e-') {
+  ePackager()
 } else {
   log.logFailure(`Unknown mode "${mode}"`);
   process.exit(1);

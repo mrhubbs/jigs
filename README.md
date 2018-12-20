@@ -78,7 +78,17 @@ module.exports = {
 
 ## To-Do
 
-  1. Move CSS processing to Webpack.
+  1. Build electron app with forge in dev mode, and it thinks it's in dev mode (tries to load localhost). Should define environment using webpack plugin.
+
+  1. Start an Electron app in dev mode (is using) and fix auto-reloading (it's getting disconnected from browser-sync or something. Maybe it's something to do with the browser-sync using webpack dev as middleware. Could be misconfigured in there.).
+
+  1. Run with vue-devtools.
+
+  1. Add stylelint to PostCSS.
+
+  1. Getting purgecss working: https://tailwindcss.com/docs/controlling-file-size/
+
+  1. Tailwind error seems to break rebuild.
 
   1. Move the base Webpack config into forge. Figure out how to extend it in the project directories. Figure out *what* kinds of things should be changed and what kind of interface for changing would be *nice*.
 

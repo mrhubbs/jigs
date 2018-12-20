@@ -1,6 +1,7 @@
 
 const path = require('path')
 
+const glob = require("glob-all")
 const Webpack = require('webpack')
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
 const PurgecssPlugin = require("purgecss-webpack-plugin")
@@ -17,6 +18,7 @@ class TailwindExtractor {
     return content.match(/[A-z0-9-:\/]+/g);
   }
 }
+
 let config = {
   mode: __DEV__ ? 'development' : 'production',
   module: {
@@ -77,13 +79,19 @@ let config = {
       }
     ]
   },
+  // NOTE: for electron main process. Webpack tries to mock these and gets them
+  // wrong, at least in the packaged version.
+  node: {
+    __dirname: process.env.NODE_ENV !== 'production',
+    __filename: process.env.NODE_ENV !== 'production'
+  },
   target: 'electron-renderer',
   resolve: {
     // By default, the runtime-only version of Vue will be resolved. We need a
     // more complete version with the template compiler.
     // TODO: Can we use the runtime-only version when doing a full build?
     alias: {
-      '@': path.join(__dirname, './src/scripts/renderer'),
+      '@': path.join(__dirname, './src/renderer'),
       'vue$': 'vue/dist/vue.esm.js'
     }
   },
