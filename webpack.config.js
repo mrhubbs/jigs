@@ -3,6 +3,7 @@ const path = require('path')
 
 const Webpack = require('webpack')
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
+const PurgecssPlugin = require("purgecss-webpack-plugin")
 
 const __DEV__ = process.env.NODE_ENV !== 'production'
 const __PROD__ = process.env.NODE_ENV === 'production'
@@ -10,6 +11,12 @@ const __PROD__ = process.env.NODE_ENV === 'production'
 // Try the environment variable, otherwise use root
 const ASSET_PATH = process.env.ASSET_PATH || '/';
 
+// To work with purgecss, since tailwind has colons in class names.
+class TailwindExtractor {
+  static extract(content) {
+    return content.match(/[A-z0-9-:\/]+/g);
+  }
+}
 let config = {
   mode: __DEV__ ? 'development' : 'production',
   module: {
@@ -94,7 +101,29 @@ let config = {
     new Webpack.NoEmitOnErrorsPlugin(),
     // the Vue plugin hooks in to make sure the <script> tags are processed
     // using any .js loaders configured in Webpack
-    new VueLoaderPlugin()
+    new VueLoaderPlugin(),
+
+    // removes unused classes from the CSS
+    // TODO: is this working?
+    new PurgecssPlugin({
+      // Specify the locations of any files you want to scan for class names.
+      paths: glob.sync([
+        // TODO: pages, layouts, etc.
+        path.join(process.cwd(), 'src/**/*.js'),
+        path.join(process.cwd(), 'src/**/*.ts'),
+        path.join(process.cwd(), 'src/**/*.vue'),
+        path.join(process.cwd(), 'src/**/*.html'),
+      ]),
+      extractors: [
+        {
+          extractor: TailwindExtractor,
+
+          // Specify the file extensions to include when scanning for
+          // class names.
+          extensions: ["html", "js", "ts", "vue"]
+        }
+      ]
+    })
   ]
 }
 
