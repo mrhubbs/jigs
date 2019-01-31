@@ -1,4 +1,6 @@
 
+// @ts-check
+
 const path = require('path')
 
 // Determine run mode from CLI
@@ -31,7 +33,9 @@ if (mode === 'build') process.env.NODE_ENV = 'production'
 const log = require('./lib/logging');
 const config = require('./lib/config').load();
 // load the build / prototype functionality
-const builder = require('./lib/metalsmith-builder')
+// const builder = require('./lib/metalsmith-builder')
+const builder = require('./lib/builder')
+const layouts = require('./lib/builder/layouts')
 const webpacker = require('./lib/webpacker')
 const browserSyncer = require('./lib/browserSyncer')
 const ePackager = require('./lib/e--packager')
@@ -46,8 +50,10 @@ if (mode === 'build') {
   builder.prototype(config, () => {
     browserSyncer.start(config, webpacker.middleware)
   })
+} else if (mode === 'layouts') {
+  layouts.handleCommand(config, process.argv.slice(3))
 } else if (mode === 'pkg-e-') {
-  ePackager()
+  ePackager(config)
 } else {
   log.logFailure(`Unknown mode "${mode}"`);
   process.exit(1);
