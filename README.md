@@ -26,6 +26,10 @@ cd project-directory
 forge build
 ```
 
+## Terminology
+
+**Client Project:** A project that forge is being used to develop.
+
 ## Installation
 
 Install [nodemon](https://www.npmjs.com/package/nodemon).
@@ -37,9 +41,10 @@ Write this to a file named `forge`:
 ```shell
 #!/bin/sh
 
-FORGE_PATH=~/desk2/forge
-# watch only the files in the project directory which should trigger forge to restart
-RUN_CMD="nodemon `cat ${FORGE_PATH}/project-dir-watchlist`"
+FORGE_PATH=~/desk2/forge/build
+
+# trigger a restart of forge if the configuration changes
+RUN_CMD="nodemon -w ./forge.config.js"
 
 if [ "${1}" != "prototype" -a "${1}" != "" ]; then
   RUN_CMD=node
@@ -78,9 +83,13 @@ module.exports = {
 
 ## To-Do
 
+  1. Watch test is not working. Never re-runs.
+
+  1. Consider how to handle forge verses client tooling. Right now I'm leaning towards installing everything (Webpack, Babel, ESlint, etc.) in forge and only installing custom plugins in the client projects. How much configuration should be client-specific? .babelrc? .eslintrc? etc...
+
   1. Build electron app with forge in dev mode, and it thinks it's in dev mode (tries to load localhost). Should define environment using webpack plugin.
 
-  1. Start an Electron app in dev mode (is using) and fix auto-reloading (it's getting disconnected from browser-sync or something. Maybe it's something to do with the browser-sync using webpack dev as middleware. Could be misconfigured in there.).
+  1. Start an Electron app in dev mode (is using) and fix auto-reloading (it's getting disconnected from browser-sync or something. Maybe it's something to do with the browser-sync using Webpack dev as middleware. Could be misconfigured in there.).
 
   1. Run with vue-devtools.
 
@@ -90,10 +99,6 @@ module.exports = {
 
   1. Tailwind error seems to break rebuild.
 
-  1. Move the base Webpack config into forge. Figure out how to extend it in the project directories. Figure out *what* kinds of things should be changed and what kind of interface for changing would be *nice*.
-
-  1. Create a mechanism in prototype mode to inject file changes if dependencies change. Use this to re-process the source files if the layouts or includes change, or to re-process the CSS if the tailwind file changes.
-
-  1. Prevent metalsmith-in-place from looking at every file - it seems to be ignoring it's pattern option.
+  1. Figure out how to extend the base Webpack config in forge in the project directories. Figure out *what* kinds of things should be changed and what kind of interface for changing would be *nice*.
 
   1. Document `forge.config.js`.

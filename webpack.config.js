@@ -1,30 +1,30 @@
 
+// Webpack configuration for the forge CLI tool.
+
 const path = require('path')
 
-const glob = require("glob-all")
 const Webpack = require('webpack')
-const VueLoaderPlugin = require('vue-loader/lib/plugin')
-const PurgecssPlugin = require("purgecss-webpack-plugin")
+const nodeExternals = require('webpack-node-externals')
 
 const __DEV__ = process.env.NODE_ENV !== 'production'
 const __PROD__ = process.env.NODE_ENV === 'production'
 
-// Try the environment variable, otherwise use root
-const ASSET_PATH = process.env.ASSET_PATH || '/';
-
-// To work with purgecss, since tailwind has colons in class names.
-class TailwindExtractor {
-  static extract(content) {
-    return content.match(/[A-z0-9-:\/]+/g);
-  }
-}
-
 let config = {
   mode: __DEV__ ? 'development' : 'production',
+  entry: {
+    index: './index.js'
+  },
+  output: {
+    publicPath: '/',
+    path: path.resolve(__dirname, './build'),
+    filename: '[name].js'
+  },
   module: {
+    // Ignore this file...
+    noParse: /unbundledRequire/,
     rules: [
       {
-        test: /\.(js|vue)$/,
+        test: /\.js$/,
         enforce: 'pre',
         exclude: /node_modules/,
         use: {
@@ -56,45 +56,11 @@ let config = {
           loader: 'babel-loader',
         }
         // see .babelrc for options
-      },
-      {
-        test: /\.vue$/,
-        use: [{
-          loader: 'vue-loader',
-          options: {
-            extractCSS: __PROD__,
-            loaders: {
-              scss: 'vue-style-loader!css-loader!postcss-loader'
-            }
-          }
-        }]
-      },
-      {
-        test: /\.css$/,
-        use: [
-          'style-loader',
-          { loader: 'css-loader', options: { importLoaders: 1 } },
-          { loader: 'postcss-loader', options: { config: { path: path.resolve(__dirname) } } }
-        ]
       }
     ]
   },
-  // NOTE: for electron main process. Webpack tries to mock these and gets them
-  // wrong, at least in the packaged version.
-  node: {
-    __dirname: process.env.NODE_ENV !== 'production',
-    __filename: process.env.NODE_ENV !== 'production'
-  },
-  target: 'electron-renderer',
-  resolve: {
-    // By default, the runtime-only version of Vue will be resolved. We need a
-    // more complete version with the template compiler.
-    // TODO: Can we use the runtime-only version when doing a full build?
-    alias: {
-      '@': path.join(__dirname, './src/renderer'),
-      'vue$': 'vue/dist/vue.esm.js'
-    }
-  },
+  target: 'node',
+  externals: [nodeExternals()], // in order to ignore all modules in node_modules folder
   plugins: [
     // TODO:
     //     NoErrorsPlugin
@@ -106,32 +72,7 @@ let config = {
     // NoErrorsPlugin from webpack config.
 
     // skips all emitting (outputting) when there are errors.
-    new Webpack.NoEmitOnErrorsPlugin(),
-    // the Vue plugin hooks in to make sure the <script> tags are processed
-    // using any .js loaders configured in Webpack
-    new VueLoaderPlugin(),
-
-    // removes unused classes from the CSS
-    // TODO: is this working?
-    new PurgecssPlugin({
-      // Specify the locations of any files you want to scan for class names.
-      paths: glob.sync([
-        // TODO: pages, layouts, etc.
-        path.join(process.cwd(), 'src/**/*.js'),
-        path.join(process.cwd(), 'src/**/*.ts'),
-        path.join(process.cwd(), 'src/**/*.vue'),
-        path.join(process.cwd(), 'src/**/*.html'),
-      ]),
-      extractors: [
-        {
-          extractor: TailwindExtractor,
-
-          // Specify the file extensions to include when scanning for
-          // class names.
-          extensions: ["html", "js", "ts", "vue"]
-        }
-      ]
-    })
+    new Webpack.NoEmitOnErrorsPlugin()
   ]
 }
 
