@@ -83,15 +83,23 @@ module.exports = {
 
 ## To-Do
 
-  1. Watch test is not working. Never re-runs.
+### Build
+
+  1. Importing from a subpath that doesn't exist (e.g. 'crocks/junkyard') doesn't cause a Webpack error but throws an error at runtime.
+
+### Layouts
+
+  1. Get imports of Vue components working in templates / pages.
+
+  1. Make it possible for templates / pages to have "live" Vue components.
+
+  1. Support Markdown in pages with `vue-markdown`.
+
+### Functionality
+
+  1. Method for client project to specify version of forge it's compatible with.
 
   1. Consider how to handle forge verses client tooling. Right now I'm leaning towards installing everything (Webpack, Babel, ESlint, etc.) in forge and only installing custom plugins in the client projects. How much configuration should be client-specific? .babelrc? .eslintrc? etc...
-
-  1. Build electron app with forge in dev mode, and it thinks it's in dev mode (tries to load localhost). Should define environment using webpack plugin.
-
-  1. Start an Electron app in dev mode (is using) and fix auto-reloading (it's getting disconnected from browser-sync or something. Maybe it's something to do with the browser-sync using Webpack dev as middleware. Could be misconfigured in there.).
-
-  1. Run with vue-devtools.
 
   1. Add stylelint to PostCSS.
 
@@ -102,3 +110,17 @@ module.exports = {
   1. Figure out how to extend the base Webpack config in forge in the project directories. Figure out *what* kinds of things should be changed and what kind of interface for changing would be *nice*.
 
   1. Document `forge.config.js`.
+
+### Prototype Mode
+
+  1. Run with vue-devtools.
+
+## Electron
+
+  1. Start an Electron app in dev mode (is using) and fix auto-reloading (it's getting disconnected from browser-sync or something. Maybe it's something to do with the browser-sync using Webpack dev as middleware. Could be misconfigured in there.).
+
+  1. Build electron app with forge in dev mode, and it thinks it's in dev mode (tries to load localhost). Should define environment using webpack plugin.
+
+### Testing
+
+  1. Watch test is not working. Never re-runs.
