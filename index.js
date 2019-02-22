@@ -24,13 +24,15 @@ if (mode === undefined) {
 }
 
 // load the configuration
-const log = require('./lib/logging')
+import { logFailure, logHeader } from './lib/logging'
 const config = require('./lib/config').load()
 const builder = require('./lib/builder')
 const layouts = require('./lib/builder/layouts')
 const webpacker = require('./lib/webpacker')
 const browserSyncer = require('./lib/browserSyncer')
 const ePackager = require('./lib/e--packager')
+
+logHeader('Forge is starting up...')
 
 if (mode === 'build') {
   builder.build(config)
@@ -51,6 +53,6 @@ if (mode === 'build') {
 } else if (mode === 'pkg-e-') {
   ePackager(config)
 } else {
-  log.logFailure(`Unknown mode "${mode}"`)
+  logFailure(`Unknown mode "${mode}"`)
   process.exit(1)
 }

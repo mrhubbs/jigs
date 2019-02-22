@@ -1,3 +1,5 @@
+// NOTE: not only is this a starting point for client eslint configs, it's also directly used by forge to lint a project's page templates.
+
 module.exports = {
   // tell eslint this file is in the project root - don't search for
   // configurations any further up the filesystem
@@ -14,8 +16,7 @@ module.exports = {
     node: true,
   },
   extends: [
-    // TODO: eslint can't find recommended config even though it's installed
-    // 'recommended',
+    'eslint:recommended',
     // lint .vue files!
     'plugin:vue/essential',
   ],
@@ -28,5 +29,15 @@ module.exports = {
     'arrow-parens': 1,
     // allow async-await
     'generator-star-spacing': 0,
+    "vue/max-attributes-per-line": ["none"],
+    "vue/html-self-closing": ["error", {
+        "html": {
+          "normal": "never",
+          "component": "always"
+        }
+      }
+    ],
+    "vue/multiline-html-element-content-newline": ["none"],
+    "vue/comment-directive": ["none"]
   }
 }
