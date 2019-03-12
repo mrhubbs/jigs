@@ -70,7 +70,8 @@ module.exports = {
     assets: './assets',
     layouts: './layouts',
     includes: './includes',
-    build: './build'
+    build: './build',
+    scripts: './build/scripts'
   }
 }
 ```
@@ -89,13 +90,24 @@ module.exports = {
 
 ### Layouts
 
+  1. Handle page leading newlines properly, and fill blank lines for removed front matter, so ESLint's reported line numbers are accurate.
+
   1. Get imports of Vue components working in templates / pages.
+    - Just use an includes folder and auto-register all the components in them?
 
   1. Make it possible for templates / pages to have "live" Vue components.
+    - Will plan to write them in .vue files and inject them with a component.
+    ```html
+    <forge-live-component bundle='do-some-cool-stuff.js' mount-to='#a-mount-point'/>
+    ```
 
-  1. Support Markdown in pages with `vue-markdown`.
+  1. Figure out how to embed source-code highlighting styles.
 
 ### Functionality
+
+  1. Prototype mode
+
+  1. Clean before build
 
   1. Method for client project to specify version of forge it's compatible with.
 

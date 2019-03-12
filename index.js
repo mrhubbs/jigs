@@ -35,6 +35,10 @@ const ePackager = require('./lib/e--packager')
 logHeader('Forge is starting up...')
 
 if (mode === 'build') {
+  // TODO: Is this asynchronous? It matters because Webpack will kick off
+  // PostCSS build which needs to scan generated HTML and JS, so the site has to
+  // be rendered first AND PostCSS can't fully kick off until Webpack has built
+  // the JS.
   builder.build(config)
 
   if (webpacker.shouldUse()) {
@@ -42,6 +46,7 @@ if (mode === 'build') {
   }
 } else if (mode === 'prototype') {
   builder.prototype(config, () => {
+    // start Browser Sync, either with or without Webpack running.
     if (webpacker.shouldUse()) {
       browserSyncer.start(config, webpacker.getMiddleware())
     } else {
