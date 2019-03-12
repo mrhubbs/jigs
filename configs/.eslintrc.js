@@ -21,6 +21,8 @@ module.exports = {
     'plugin:vue/essential',
   ],
   rules: {
+    // all console. calls
+    "no-console": 0,
     // semicolons are not allowed
     semi: ["error", "never"],
     // require single quotes wherever possible, allow backticks
@@ -29,7 +31,7 @@ module.exports = {
     'arrow-parens': 1,
     // allow async-await
     'generator-star-spacing': 0,
-    "vue/max-attributes-per-line": ["none"],
+    "vue/max-attributes-per-line": 0,
     "vue/html-self-closing": ["error", {
         "html": {
           "normal": "never",
@@ -37,7 +39,7 @@ module.exports = {
         }
       }
     ],
-    "vue/multiline-html-element-content-newline": ["none"],
-    "vue/comment-directive": ["none"]
+    "vue/multiline-html-element-content-newline": 0,
+    "vue/comment-directive": 0
   }
 }

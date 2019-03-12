@@ -15,7 +15,7 @@ class TailwindExtractor {
   }
 }
 
-export const makeConfig = mode => {
+const makeConfig = mode => {
   const __DEV__ = mode === 'development'
   const __PROD__ = mode === 'production'
 
@@ -45,7 +45,7 @@ export const makeConfig = mode => {
               // TODO: for some reason eslint wasn't finding the config file
               // NOTE: this disables 'local' eslint files in directories with
               // source code
-              configFile: path.resolve(__dirname, 'configs', '.eslintrc.js')
+              configFile: path.resolve(__dirname, '.eslintrc.js')
             }
           }
         },
@@ -94,6 +94,12 @@ export const makeConfig = mode => {
         '@': path.join(__dirname, './src/renderer'),
         'vue$': 'vue/dist/vue.esm.js'
       }
+    },
+    // teach Webpack to look for loaders in /path/to/forge/node_modules instead
+    // of /path/to/client-project/node_modules
+    // TODO: make sure that loaders installed in client projects still work
+    resolveLoader: {
+      modules: [ path.join(__dirname, '..', 'node_modules') ]
     },
     plugins: [
       // TODO:
@@ -144,4 +150,6 @@ export const makeConfig = mode => {
   return config
 }
 
-export default makeConfig
+module.exports = {
+  makeConfig
+}
