@@ -24,7 +24,7 @@ if (mode === undefined) {
 }
 
 // load the configuration
-import { logFailure, logHeader } from './lib/logging'
+import { logFailure, logHeader, logSuccess, makeLogCall } from './lib/logging'
 const config = require('./lib/config').load()
 const builder = require('./lib/builder')
 const layouts = require('./lib/builder/layouts')
@@ -35,15 +35,26 @@ const ePackager = require('./lib/e--packager')
 logHeader('Forge is starting up...')
 
 if (mode === 'build') {
-  // TODO: Is this asynchronous? It matters because Webpack will kick off
+  // We must build the site first. It matters because Webpack will kick off
   // PostCSS build which needs to scan generated HTML and JS, so the site has to
   // be rendered first AND PostCSS can't fully kick off until Webpack has built
   // the JS.
+  // TODO: Chain the tasks instead of nesting. How do you do that functionally?
   builder.build(config)
-
-  if (webpacker.shouldUse()) {
-    webpacker.build()
-  }
+  .fork(
+    // failed
+    logFailure,
+    // succeeded, build with Webpack if we should
+    () => {
+      if (webpacker.shouldUse()) {
+        webpacker.build()
+        .fork(
+          makeLogCall(logFailure, 'something went wrong'),
+          makeLogCall(logSuccess, 'done building')
+        )
+      }
+    }
+  )
 } else if (mode === 'prototype') {
   builder.prototype(config, () => {
     // start Browser Sync, either with or without Webpack running.
