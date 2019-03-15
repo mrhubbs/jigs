@@ -41,9 +41,12 @@ Write this to a file named `forge`:
 ```shell
 #!/bin/sh
 
-FORGE_PATH=~/desk2/forge/build
+FORGE_PATH=~/desk2/forge/build/
 
-# trigger a restart of forge if the configuration changes
+# For prototype mode, we'll actually restart Forge if it's config file changes.
+# TODO: perhaps we should implement this in Forge itself?
+# It'd be cleaner and give us cleaner console output without nodemon spitting
+# things out.
 RUN_CMD="nodemon -w ./forge.config.js"
 
 if [ "${1}" != "prototype" -a "${1}" != "" ]; then
@@ -66,7 +69,7 @@ module.exports = {
     ...
   },
   dirs: {
-    source: './src',
+    pages: './pages',
     assets: './assets',
     layouts: './layouts',
     includes: './includes',

@@ -56,13 +56,17 @@ if (mode === 'build') {
     }
   )
 } else if (mode === 'prototype') {
-  builder.prototype(config, () => {
-    // start Browser Sync, either with or without Webpack running.
-    if (webpacker.shouldUse()) {
-      browserSyncer.start(config, webpacker.getMiddleware())
-    } else {
-      browserSyncer.start(config)
-    }
+  builder.prototype(config)
+  .fork(
+    // failed
+    logFailure,
+    () => {
+      // start Browser Sync, either with or without Webpack running.
+      if (webpacker.shouldUse()) {
+        browserSyncer.start(config, webpacker.getMiddleware())
+      } else {
+        browserSyncer.start(config)
+      }
   })
 } else if (mode === 'layouts') {
   layouts.handleCommand(config, process.argv.slice(3))
