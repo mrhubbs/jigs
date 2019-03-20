@@ -1,5 +1,4 @@
-
-const path = require('path');
+const path = require('path')
 
 // To work with purgecss, since tailwind has colons in class names.
 class TailwindExtractor {
@@ -48,7 +47,9 @@ let config = {
 
 // TODO: remove any disabled plugins
 
-// collect disabled ones into a list
+// Collect disabled ones into a list.
+// This mechanism allows to flexibly disable plugins in case we need to do so in
+// different build modes.
 disabledPlugins = Object.keys(disabledPlugins).filter((name) => {
   return disabledPlugins[name] === false
 });

@@ -115,13 +115,15 @@ module.exports = {
 
   1. Getting purgecss working: https://tailwindcss.com/docs/controlling-file-size/
 
-  1. Tailwind error seems to break rebuild.
+  1. Tailwind error seems to break rebuild - the PostCSS tailwind plugin seems to watch the tailwind.js file, and stops watching after an error.
 
   1. Method for client project to specify version of forge it's compatible with.
 
   1. Consider how to handle forge verses client tooling. Right now I'm leaning towards installing everything (Webpack, Babel, ESlint, etc.) in forge and only installing custom plugins in the client projects. How much configuration should be client-specific? .babelrc? .eslintrc? etc...
 
   1. Add stylelint to PostCSS.
+
+  1. Create a nice way to include the tailwind `tailwindcss/plugins/container` in `tailwind.js` without having to modify the file. Or, just modify the file.
 
   1. Document `forge.config.js`.
 
