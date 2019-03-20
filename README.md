@@ -1,12 +1,13 @@
 # Forge
 
-Pre-configured [Metalsmith](http://metalsmith.io)-based stack to build static websites.
+Originally inspired by [Metalsmith](http://metalsmith.io), it's a stack to build static websites.
 
-This project is [semi-configurable](#configuration). It's tailored towards my chosen stack for static site development:
+This is tailored towards my favorite tools:
 
-  - EJS templates
-  - PostCSS with plugins to emulate SASS + ...
-  - ... tailwind
+  - [Vue](https://vuejs.org) templates/layouts
+  - [PostCSS](https://postcss.org) with plugins to emulate SASS + [TailwindCSS](https://tailwindcss.com)
+  - [Webpack](https://webpack.js.org)
+  - [markdown-it](https://github.com/markdown-it/markdown-it)
 
 ## Usage
 
@@ -65,7 +66,6 @@ Expects a file named `forge.config.js` to be in the project directory:
 ```javascript
 module.exports = {
   metadata: {
-    // whatever you want to pass to metalsmith
     ...
   },
   dirs: {
@@ -108,21 +108,20 @@ module.exports = {
 
 ### Functionality
 
-  1. Prototype mode
-
   1. Clean before build
+
+  1. Figure out how to extend the base Webpack config in forge in the project directories. Figure out *what* kinds of things should be changed and what kind of interface for changing would be *nice*.
+  https://github.com/survivejs/webpack-merge
+
+  1. Getting purgecss working: https://tailwindcss.com/docs/controlling-file-size/
+
+  1. Tailwind error seems to break rebuild.
 
   1. Method for client project to specify version of forge it's compatible with.
 
   1. Consider how to handle forge verses client tooling. Right now I'm leaning towards installing everything (Webpack, Babel, ESlint, etc.) in forge and only installing custom plugins in the client projects. How much configuration should be client-specific? .babelrc? .eslintrc? etc...
 
   1. Add stylelint to PostCSS.
-
-  1. Getting purgecss working: https://tailwindcss.com/docs/controlling-file-size/
-
-  1. Tailwind error seems to break rebuild.
-
-  1. Figure out how to extend the base Webpack config in forge in the project directories. Figure out *what* kinds of things should be changed and what kind of interface for changing would be *nice*.
 
   1. Document `forge.config.js`.
 

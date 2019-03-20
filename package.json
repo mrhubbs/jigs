@@ -1,7 +1,7 @@
 {
   "name": "forge",
   "version": "0.1.0",
-  "description": "Pre-configured Metalsmith-based stack to build static websites.",
+  "description": "Pre-configured stack to build static websites.",
   "main": "index.js",
   "scripts": {
     "build": "webpack",
