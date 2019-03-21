@@ -1,6 +1,10 @@
 
 const path = require('path')
 
+import { logFailure, logHeader, logSuccess, makeLogCall } from './lib/logging'
+
+logHeader('Forge is starting up...')
+
 // Determine run mode from CLI
 let mode = process.argv[2]
 
@@ -24,7 +28,6 @@ if (mode === undefined) {
 }
 
 // load the configuration
-import { logFailure, logHeader, logSuccess, makeLogCall } from './lib/logging'
 const config = require('./lib/config').load()
 const builder = require('./lib/builder')
 const layouts = require('./lib/builder/layouts')
@@ -32,15 +35,14 @@ const webpacker = require('./lib/webpacker')
 const browserSyncer = require('./lib/browserSyncer')
 const ePackager = require('./lib/e--packager')
 
-logHeader('Forge is starting up...')
-
 if (mode === 'build') {
   // We must build the site first. It matters because Webpack will kick off
   // PostCSS build which needs to scan generated HTML and JS, so the site has to
   // be rendered first AND PostCSS can't fully kick off until Webpack has built
   // the JS.
   // TODO: Chain the tasks instead of nesting. How do you do that functionally?
-  builder.build(config)
+  builder.cleanBuild(config)
+  .chain(() => builder.build(config))
   .fork(
     // failed
     logFailure,
