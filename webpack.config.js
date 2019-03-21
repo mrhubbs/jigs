@@ -19,6 +19,7 @@ let config = {
     path: path.resolve(__dirname, './build'),
     filename: '[name].js'
   },
+  devtool: 'cheap-source-map',
   module: {
     // Ignore this file...
     noParse: /unbundledRequire/,

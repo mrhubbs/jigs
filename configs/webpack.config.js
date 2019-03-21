@@ -21,6 +21,7 @@ const makeConfig = mode => {
 
   let config = {
     mode: __DEV__ ? 'development' : 'production',
+    devtool: 'cheap-source-map',
     module: {
       rules: [
         {

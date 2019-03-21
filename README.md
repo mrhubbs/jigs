@@ -108,8 +108,6 @@ module.exports = {
 
 ### Functionality
 
-  1. Clean before build
-
   1. Figure out how to extend the base Webpack config in forge in the project directories. Figure out *what* kinds of things should be changed and what kind of interface for changing would be *nice*.
   https://github.com/survivejs/webpack-merge
 
