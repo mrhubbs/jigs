@@ -3,6 +3,8 @@
 module.exports = {
   // tell eslint this file is in the project root - don't search for
   // configurations any further up the filesystem
+  // TODO: does this even make sense the way we're loading this for client
+  // projects?
   root: true,
   parserOptions: {
     // parser is set under parserOptions instead of as a sibling with it so it
