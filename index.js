@@ -22,11 +22,6 @@ if (mode === 'init') {
   process.exit(0)
 }
 
-// default to prototyping, if no mode is specified
-if (mode === undefined) {
-  mode = 'prototype'
-}
-
 // load the configuration
 const config = require('./lib/config').load()
 const builder = require('./lib/builder')
@@ -35,6 +30,12 @@ const webpacker = require('./lib/webpacker')
 const browserSyncer = require('./lib/browserSyncer')
 const ePackager = require('./lib/e--packager')
 
+// default to prototyping, if no mode is specified
+if (mode === undefined || mode === 'prototype') {
+  mode = 'prototype'
+}
+
+// now, vee build! (or prototype... or something else...)
 if (mode === 'build') {
   // We must build the site first. It matters because Webpack will kick off
   // PostCSS build which needs to scan generated HTML and JS, so the site has to

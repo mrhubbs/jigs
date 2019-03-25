@@ -1,0 +1,35 @@
+#!/bin/sh
+
+say () {
+  echo "\n\033[1;34m# ${1}\033[0;37m\n"
+}
+
+set -e
+# any subsequent commands that fail will cause the script to stop
+
+say "Installing dependencies"
+
+# install dependencies
+npm i
+
+say "Compiling"
+
+# compile
+npm run build
+
+say "Installing starter script"
+
+# install forge bootstrap script
+CMD="s+THE_INSTALL_PATH+${PWD}+"
+
+USER_BIN=${HOME}/.bin
+FORGE_FILE=${USER_BIN}/forge
+mkdir -p ${USER_BIN}/
+
+cat ./forge | sed ${CMD} > ${FORGE_FILE}
+chmod +x ${FORGE_FILE}
+
+echo "...done"
+
+say "Forge installed"
+echo "make sure ${USER_BIN} is in your PATH"
