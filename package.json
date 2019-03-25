@@ -2,10 +2,14 @@
   "name": "forge",
   "version": "0.1.0",
   "description": "Pre-configured stack to build static websites.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mrhubbs/forge.git"
+  },
   "main": "build/index.js",
   "scripts": {
-    "build": "webpack",
-    "buildw": "webpack --watch",
+    "build": "NODE_ENV=production webpack",
+    "buildw": "NODE_ENV=development webpack --watch",
     "test": "mocha-webpack --recursive \"./lib/**/*.spec.js\"",
     "testw": "mocha-webpack --watch --recursive \"./lib/**/*.spec.js\""
   },

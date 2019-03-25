@@ -7,15 +7,6 @@ say () {
 set -e
 # any subsequent commands that fail will cause the script to stop
 
-say "Installing dependencies"
-
-# install dependencies
-npm i
-
-say "Compiling"
-
-# compile
-npm run build
 
 say "Installing starter script"
 

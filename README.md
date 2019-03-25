@@ -27,6 +27,12 @@ cd project-directory
 forge build
 ```
 
+## Installation
+
+```shell
+./build-forge && ./install-forge
+```
+
 ## Terminology
 
 **Client Project:** A project that forge is being used to develop.
@@ -37,25 +43,7 @@ Install [nodemon](https://www.npmjs.com/package/nodemon).
 
 Clone this repo.
 
-Write this to a file named `forge`:
-
-```shell
-#!/bin/sh
-
-FORGE_PATH=~/desk2/forge/build/
-
-# For prototype mode, we'll actually restart Forge if it's config file changes.
-# TODO: perhaps we should implement this in Forge itself?
-# It'd be cleaner and give us cleaner console output without nodemon spitting
-# things out.
-RUN_CMD="nodemon -w ./forge.config.js"
-
-if [ "${1}" != "prototype" -a "${1}" != "" ]; then
-  RUN_CMD=node
-fi
-
-${RUN_CMD} ${FORGE_PATH} "${@}"
-```
+TODO:
 
 ... add it to your path and make it executable.
 

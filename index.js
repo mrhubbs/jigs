@@ -19,6 +19,7 @@ require('module').Module._initPaths()
 // new, empty project won't have a config)
 if (mode === 'init') {
   require('./lib/initer')()
+  logHeader('Done initializing new forge project')
   process.exit(0)
 }
 
