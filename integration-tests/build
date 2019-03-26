@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# clean up
+rm -rf built-forge
+# restage
+mkdir -p built-forge/build
+cp -r ../build built-forge/
+cp -r ../{package*.json,configs,install-forge,forge} built-forge/
+
+docker build -t forge-test .

@@ -1,0 +1,18 @@
+#!/bin/sh
+
+say () {
+  echo "\n\033[1;34m# ${1}\033[0;37m\n"
+}
+
+set -e
+# any subsequent commands that fail will cause the script to stop
+
+say "Installing dependencies"
+
+# install dependencies
+npm i
+
+say "Compiling"
+
+# compile
+npm run build

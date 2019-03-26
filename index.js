@@ -1,195 +1,82 @@
-// Run this from the project directory. E.g. the repo of the website being built.
 
-const path = require('path');
+const path = require('path')
 
-const metalsmith = require('metalsmith');
-const assets = require('metalsmith-assets');
-const inPlace = require('metalsmith-in-place');
-const layouts = require('metalsmith-layouts');
-const ignore = require('metalsmith-ignore');
-const postcss = require('metalsmith-postcss');
-const watch = require('metalsmith-watch');
-const debug = require('metalsmith-debug');
+import { logFailure, logHeader, logSuccess, makeLogCall } from './lib/logging'
 
-const browserSync = require('browser-sync');
-const hljs = require('highlight.js');
-
-const { logSuccess, logInfo, logFailure } = require('./lib/logging');
-
-const postcss_config = require(path.join(__dirname, 'postcss.config.js'));
+logHeader('Forge is starting up...')
 
 // Determine run mode from CLI
-let mode = process.argv[2];
-if (mode === undefined) {
-  mode = 'prototype';
-} else if (mode !== 'build' && mode !== 'prototype') {
-  logFailure(`Unknown mode "${mode}"`);
-  process.exit(1);
+let mode = process.argv[2]
+
+// We have a lot of tooling installed in the forge directory's node_modules
+// folder. However, unlike usual tooling, we run from a different directory (the
+// project's). So we add to the NODE_PATH so we can find all the tooling.
+process.env.NODE_PATH = path.resolve(path.join(__dirname, 'node_modules'))
+require('module').Module._initPaths()
+
+// initialize a new project
+// (do this before anything else because we try to load a config below, and a
+// new, empty project won't have a config)
+if (mode === 'init') {
+  require('./lib/initer')()
+  logHeader('Done initializing new forge project')
+  process.exit(0)
 }
 
-const config = require(path.resolve('./forge.config.js'));
-if (config.layouts === undefined) config.layouts = { };
-// TODO: validate `config`
+// load the configuration
+const config = require('./lib/config').load()
+const builder = require('./lib/builder')
+const layouts = require('./lib/builder/layouts')
+const webpacker = require('./lib/webpacker')
+const browserSyncer = require('./lib/browserSyncer')
+const ePackager = require('./lib/e--packager')
 
-const forgeBaseForge = () => {
-  return metalsmith(process.cwd())
-    .metadata(config.metadata)
-    .source(config.dirs.source)
-    .destination(config.dirs.build)
-    .use(debug());
+// default to prototyping, if no mode is specified
+if (mode === undefined || mode === 'prototype') {
+  mode = 'prototype'
 }
 
-// makes a forge for everything but CSS: HTML, markdown, templates, assets, etc.
-const forgeNonCssForge = () => {
-  return forgeBaseForge()
-    .clean(true)
-    // plugins
-    .use(assets({
-      source: config.dirs.assets,
-      destination: config.dirs.assets
-    }))
-    .use(inPlace({
-      suppressNoFilesError: mode === 'prototype',
-      engineOptions: {
-        pattern: ['**/*.ejs', '**/*.md'],
-        // So we don't have to write relative paths to the includes
-        views: [path.resolve(config.dirs.includes)],
-        // options for jstransformer-markdown-it
-        // enable: [ 'breaks' ]
-        plugins: [
-          // subscripts surrounded by ~ ~
-          'markdown-it-sub',
-          // suberscrips surrounded by ^ ^
-          'markdown-it-sup'
-        ],
-        breaks: true,
-        // TODO: smartypants quotes
-        // apply syntax highlighting to fenced code blocks
-        highlight: function (str, lang) {
-          if (lang && hljs.getLanguage(lang)) {
-            try {
-              return hljs.highlight(lang, str).value;
-            } catch (__) { }
-          }
-
-          return ''  // use external default escaping
-        }
-      }
-    }))
-    .use(layouts({
-      directory: config.dirs.layouts,
-      default: config.layouts.default || 'basepage.ejs',
-      pattern: ['**/*.ejs', '**/*.md', '**/*.html', '*.ejs', '*.md', '*.html'],
-      suppressNoFilesError: mode === 'prototype',
-      engineOptions: {
-        // So we don't have to write relative paths to the includes
-        views: [path.resolve(config.dirs.includes)]
-      }
-    }));
-}
-
-const forgeCssOnlyForge = () => {
-  // create a forge just for building CSS
-  return forgeBaseForge()
-    // run after main forge, don't want to overwrite
-    .clean(false)
-    .use(
-      postcss(
-        postcss_config(
-          config.dirs, { }
+// now, vee build! (or prototype... or something else...)
+if (mode === 'build') {
+  // We must build the site first. It matters because Webpack will kick off
+  // PostCSS build which needs to scan generated HTML and JS, so the site has to
+  // be rendered first AND PostCSS can't fully kick off until Webpack has built
+  // the JS.
+  // TODO: Chain the tasks instead of nesting. How do you do that functionally?
+  builder.cleanBuild(config)
+  .chain(() => builder.build(config))
+  .fork(
+    // failed
+    logFailure,
+    // succeeded, build with Webpack if we should
+    () => {
+      if (webpacker.shouldUse()) {
+        webpacker.build()
+        .fork(
+          makeLogCall(logFailure, 'something went wrong'),
+          makeLogCall(logSuccess, 'done building')
         )
-      )
-    )
-    // Don't want to touch non-CSS
-    // NOTE: we are technically telling this to ignore the CSS folder, but
-    // apparently the postcss plugin ignore this plugin
-    .use(
-      ignore([
-        '*',
-      ])
-    )
-}
-
-let theForge = forgeNonCssForge()
-
-if (mode == 'build') {
-  // building
-
-  // build HTML + JS + assets + whatever else, but not CSS
-  theForge
-    .use(ignore([
-      // Ignore all CSS. We'll leave that for the CSS forge.
-      '**/*.css'
-    ]))
-    .build(function(err) {
-      if (err) throw err;
-
-      logSuccess('Built HTML + JS + assets');
-
-      // build CSS
-      forgeCssOnlyForge()
-        .build(function(err) {
-          if (err) throw err;
-
-          logSuccess('Built CSS');
-        })
-    })
-} else if (mode == 'prototype') {
-  // prototyping
-
-  // add postcss, disabling the plugins that don't play well with prototyping
-  theForge
-    .use(
-      postcss({
-        ...postcss_config(
-          config.dirs, {
-            'postcss-purgecss': false,
-            'postcss-clean': false
-          }
-        ),
-        // load only the main css file; it will import the others
-        pattern: 'main.css'
-      })
-    );
-
-  // set up the forge to watch
-  theForge
-    .use(watch({
-      paths: {
-        [config.dirs.source + '/**/*']: true,
-        [config.dirs.assets + '/**/*']: true,
-        // TODO: auto-rebuild if layouts change
-        // TODO: auto-rebuild if includes change
-        // Enabling this option just causes metalsmith to try to render the
-        // layouts, instead of the pages that use them.
-        // [config.dirs.layouts + '/**/*']: true
       }
-    }))
-
-  theForge
-    .build(function(err) {
-      if (err) throw err;
-
-      logInfo('Prototyping started');
-
-      // Start browser-sync once the initial build has completed
-      const serveDir = path.join(process.cwd(), config.dirs.build);
-      browserSync({
-        files: [
-          path.join(serveDir, '*'),
-          path.join(serveDir, '**', '*'),
-        ],
-        cwd: serveDir,
-        watchEvents: [
-          'add', 'change', 'unlink', 'addDir', 'unlinkDir'
-        ],
-        watchOptions: {
-          'ignoreInitial': true
-        },
-        server: {
-          baseDir: serveDir,
-        },
-        open: false
-      });
-    });
+    }
+  )
+} else if (mode === 'prototype') {
+  builder.prototype(config)
+  .fork(
+    // failed
+    logFailure,
+    () => {
+      // start Browser Sync, either with or without Webpack running.
+      if (webpacker.shouldUse()) {
+        browserSyncer.start(config, webpacker.getMiddleware())
+      } else {
+        browserSyncer.start(config)
+      }
+  })
+} else if (mode === 'layouts') {
+  layouts.handleCommand(config, process.argv.slice(3))
+} else if (mode === 'pkg-e-') {
+  ePackager(config)
+} else {
+  logFailure(`Unknown mode "${mode}"`)
+  process.exit(1)
 }
