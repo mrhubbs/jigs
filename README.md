@@ -1,5 +1,7 @@
 # Forge
 
+[![CircleCI](https://circleci.com/gh/mrhubbs/forge.svg?style=svg)](https://circleci.com/gh/mrhubbs/forge)
+
 Originally inspired by [Metalsmith](http://metalsmith.io), it's a stack to build static websites.
 
 This is tailored towards my favorite tools:
@@ -80,8 +82,6 @@ module.exports = {
   1. Importing from a subpath that doesn't exist (e.g. 'crocks/junkyard') doesn't cause a Webpack error but throws an error at runtime.
 
 ### Layouts
-
-  1. Handle page leading newlines properly, and fill blank lines for removed front matter, so ESLint's reported line numbers are accurate.
 
   1. Get imports of Vue components working in templates / pages.
     - Just use an includes folder and auto-register all the components in them?
