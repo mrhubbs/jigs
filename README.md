@@ -62,7 +62,6 @@ module.exports = {
     pages: './pages',
     assets: './assets',
     layouts: './layouts',
-    includes: './includes',
     build: './build',
     scripts: './build/scripts'
   }
@@ -76,6 +75,10 @@ module.exports = {
 ...
 
 ## To-Do
+
+### Bugs
+
+  1. biTree gives "At least one item must be a root item (must not inherit from any other items)." if there are no layouts.
 
 ### Build
 
@@ -95,6 +98,8 @@ module.exports = {
   1. Figure out how to embed source-code highlighting styles.
 
 ### Functionality
+
+  1. Make biTree use `crocks`.
 
   1. Figure out how to extend the base Webpack config in forge in the project directories. Figure out *what* kinds of things should be changed and what kind of interface for changing would be *nice*.
   https://github.com/survivejs/webpack-merge
