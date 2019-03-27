@@ -11,7 +11,7 @@ let config = {
   },
   output: {
     publicPath: ASSET_PATH,
-    path: path.resolve(__dirname, forgeConfig.dirs.scripts),
+    path: path.resolve(__dirname, path.join(forgeConfig.dirs.build, forgeConfig.dirs.scripts)),
     filename: '[name].js'
   }
 }

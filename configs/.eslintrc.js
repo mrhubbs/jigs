@@ -23,7 +23,7 @@ module.exports = {
     'plugin:vue/essential',
   ],
   rules: {
-    // all console. calls
+    // all console.something calls
     "no-console": 0,
     // semicolons are not allowed
     semi: ["error", "never"],
@@ -33,6 +33,7 @@ module.exports = {
     'arrow-parens': 1,
     // allow async-await
     'generator-star-spacing': 0,
+    // customize Vue rules to be a bit more flexible
     "vue/max-attributes-per-line": 0,
     "vue/html-self-closing": ["error", {
         "html": {
