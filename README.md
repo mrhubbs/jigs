@@ -1,5 +1,7 @@
 # Forge
 
+[![CircleCI](https://circleci.com/gh/mrhubbs/forge.svg?style=svg)](https://circleci.com/gh/mrhubbs/forge)
+
 Originally inspired by [Metalsmith](http://metalsmith.io), it's a stack to build static websites.
 
 This is tailored towards my favorite tools:
@@ -60,7 +62,6 @@ module.exports = {
     pages: './pages',
     assets: './assets',
     layouts: './layouts',
-    includes: './includes',
     build: './build',
     scripts: './build/scripts'
   }
@@ -75,13 +76,15 @@ module.exports = {
 
 ## To-Do
 
+### Bugs
+
+  1. biTree gives "At least one item must be a root item (must not inherit from any other items)." if there are no layouts.
+
 ### Build
 
   1. Importing from a subpath that doesn't exist (e.g. 'crocks/junkyard') doesn't cause a Webpack error but throws an error at runtime.
 
 ### Layouts
-
-  1. Handle page leading newlines properly, and fill blank lines for removed front matter, so ESLint's reported line numbers are accurate.
 
   1. Get imports of Vue components working in templates / pages.
     - Just use an includes folder and auto-register all the components in them?
@@ -95,6 +98,8 @@ module.exports = {
   1. Figure out how to embed source-code highlighting styles.
 
 ### Functionality
+
+  1. Make biTree use `crocks`.
 
   1. Figure out how to extend the base Webpack config in forge in the project directories. Figure out *what* kinds of things should be changed and what kind of interface for changing would be *nice*.
   https://github.com/survivejs/webpack-merge
