@@ -35,13 +35,7 @@ module.exports = {
     'generator-star-spacing': 0,
     // customize Vue rules to be a bit more flexible
     "vue/max-attributes-per-line": 0,
-    "vue/html-self-closing": ["error", {
-        "html": {
-          "normal": "never",
-          "component": "always"
-        }
-      }
-    ],
+    "vue/html-self-closing": 0,
     "vue/multiline-html-element-content-newline": 0,
     "vue/comment-directive": 0
   }
