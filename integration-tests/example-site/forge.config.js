@@ -9,6 +9,6 @@ module.exports = {
     assets: './src/assets',
     layouts: './src/layouts',
     build: './build',
-    scripts: './scripts'
+    scripts: './src/scripts'
   }
 }

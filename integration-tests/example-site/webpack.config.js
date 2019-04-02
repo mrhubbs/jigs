@@ -7,7 +7,7 @@ const ASSET_PATH = process.env.ASSET_PATH || '/';
 
 let config = {
   entry: {
-    main: './src/scripts/main.js'
+    main: path.resolve(forgeConfig.dirs.scripts, 'main.js')
   },
   output: {
     publicPath: ASSET_PATH,
