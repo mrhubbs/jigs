@@ -22,8 +22,8 @@ let config = {
       }
     }),
     require('postcss-simple-vars'),
-    require('postcss-extend'),
     require('postcss-nested'),
+    require('postcss-extend'),
     require('postcss-mixins'),
     // When including the tailwind config by filename, the tailwind plugin will
     // watch the .js file and rebuild the css if it changes. Nice!
