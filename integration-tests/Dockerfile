@@ -46,8 +46,8 @@ COPY --chown=tester built-forge/package-lock.json .
 COPY --chown=tester built-forge/build build/
 COPY --chown=tester built-forge/install-forge .
 COPY --chown=tester built-forge/forge .
+
 # install forge deps
-USER ${TEST_USER}
 RUN npm install
 # install forge
 RUN ./install-forge
@@ -57,4 +57,5 @@ RUN ./install-forge
 WORKDIR ${TEST_USER_HOME}
 ADD tests tests/
 
+# default in this directory
 WORKDIR ${TEST_USER_HOME}
