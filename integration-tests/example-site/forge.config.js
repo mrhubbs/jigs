@@ -4,6 +4,8 @@ module.exports = {
       title: 'Some Drab Title'
     }
   },
+  // NOTE: this is overwritten by the container build process
+  forgeVersion: '',
   dirs: {
     pages: './src/pages',
     assets: './src/assets',

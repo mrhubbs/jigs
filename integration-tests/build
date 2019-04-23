@@ -2,7 +2,7 @@
 
 # clean up
 rm -rf built-forge
-# restage (copy the current build of forge into the docker build context)
+# copy all these files so they are available to the docker build context
 mkdir -p built-forge/build
 cp -r ../build built-forge/
 cp -r ../{package*.json,configs,install-forge,forge} built-forge/
