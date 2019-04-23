@@ -13,7 +13,8 @@ say "Installing starter script"
 # install forge bootstrap script
 CMD="s+THE_INSTALL_PATH+${PWD}+"
 
-USER_BIN=${HOME}/.bin
+# either the first argument or ~/.bin
+USER_BIN=${1:-${HOME}/.bin}
 FORGE_FILE=${USER_BIN}/forge
 mkdir -p ${USER_BIN}/
 

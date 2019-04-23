@@ -1,0 +1,3 @@
+#!/bin/sh
+
+docker run --user tester forge-int-test ./tests/run-tests.sh

@@ -58,15 +58,30 @@ module.exports = {
   metadata: {
     ...
   },
+  forgeVersion: "4.0.0",
   dirs: {
-    pages: './pages',
-    assets: './assets',
-    layouts: './layouts',
+    pages: './src/pages',
+    assets: './src/assets',
+    layouts: './src/layouts',
     build: './build',
-    scripts: './build/scripts'
+    scripts: './src/scripts'
   }
 }
 ```
+
+### Metadata
+
+This object is merged with the front matter of every page when the page is rendered. It's actually a 3-way merge between the page's front matter (overrides everything), the front matter inherited from the page's layout (takes 2nd priority) and the metadata (takes last priority).
+
+### forgeVersion
+
+The version(s) of `forge` the project is compatible with. Supports all the [options](https://docs.npmjs.com/files/package.json#dependencies) you can use in a `package.json`.
+
+### Dirs
+
+Relative paths to various source directories. These are customizable so you can name the directories whatever you want.
+
+####
 
 ## Notes
 
@@ -75,16 +90,6 @@ module.exports = {
 ...
 
 ## To-Do
-
-### Bugs
-
-  1. biTree gives "At least one item must be a root item (must not inherit from any other items)." if there are no layouts.
-
-### Build
-
-  1. Importing from a subpath that doesn't exist (e.g. 'crocks/junkyard') doesn't cause a Webpack error but throws an error at runtime.
-
-### Layouts
 
   1. Get imports of Vue components working in templates / pages.
     - Just use an includes folder and auto-register all the components in them?
@@ -97,37 +102,4 @@ module.exports = {
 
   1. Figure out how to embed source-code highlighting styles.
 
-### Functionality
-
-  1. Make biTree use `crocks`.
-
-  1. Figure out how to extend the base Webpack config in forge in the project directories. Figure out *what* kinds of things should be changed and what kind of interface for changing would be *nice*.
-  https://github.com/survivejs/webpack-merge
-
-  1. Getting purgecss working: https://tailwindcss.com/docs/controlling-file-size/
-
-  1. Tailwind error seems to break rebuild - the PostCSS tailwind plugin seems to watch the tailwind.js file, and stops watching after an error.
-
-  1. Method for client project to specify version of forge it's compatible with.
-
   1. Consider how to handle forge verses client tooling. Right now I'm leaning towards installing everything (Webpack, Babel, ESlint, etc.) in forge and only installing custom plugins in the client projects. How much configuration should be client-specific? .babelrc? .eslintrc? etc...
-
-  1. Add stylelint to PostCSS.
-
-  1. Create a nice way to include the tailwind `tailwindcss/plugins/container` in `tailwind.js` without having to modify the file. Or, just modify the file.
-
-  1. Document `forge.config.js`.
-
-### Prototype Mode
-
-  1. Run with vue-devtools.
-
-## Electron
-
-  1. Start an Electron app in dev mode (is using) and fix auto-reloading (it's getting disconnected from browser-sync or something. Maybe it's something to do with the browser-sync using Webpack dev as middleware. Could be misconfigured in there.).
-
-  1. Build electron app with forge in dev mode, and it thinks it's in dev mode (tries to load localhost). Should define environment using webpack plugin.
-
-### Testing
-
-  1. Watch test is not working. Never re-runs.
