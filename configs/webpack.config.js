@@ -75,7 +75,7 @@ const makeConfig = mode => {
           use: [
             'style-loader',
             { loader: 'css-loader', options: { importLoaders: 1 } },
-            { loader: 'postcss-loader', options: { config: { path: path.resolve(__dirname) } } }
+            { loader: 'postcss-loader', options: { config: { path: path.resolve(__dirname, '../configs') } } }
           ]
         }
       ]

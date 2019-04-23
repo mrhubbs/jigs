@@ -1,12 +1,19 @@
 
 const path = require('path')
 
-import { logFailure, logHeader, logSuccess, makeLogCall } from './lib/logging'
+const semver = require('semver')
 
-logHeader('Forge is starting up...')
+import { logFailure, logHeader, logSuccess, makeLogCall } from './lib/logging'
+const forgePackage = require('./package.json')
 
 // Determine run mode from CLI
 let mode = process.argv[2]
+const args_and_options = process.argv.slice(2)
+
+if (args_and_options.includes('-v') || args_and_options.includes('--version')) {
+  console.log(forgePackage.version)
+  process.exit(0)
+}
 
 // We have a lot of tooling installed in the forge directory's node_modules
 // folder. However, unlike usual tooling, we run from a different directory (the
@@ -30,6 +37,18 @@ const layouts = require('./lib/builder/layouts')
 const webpacker = require('./lib/webpacker')
 const browserSyncer = require('./lib/browserSyncer')
 const ePackager = require('./lib/e--packager')
+
+// check compatibility between forge and the client project
+if (!semver.satisfies(forgePackage.version, config.forgeVersion)) {
+  logFailure(
+    `The client project ${path.basename(process.cwd())} requires version ` +
+    `${config.forgeVersion} of forge, but the forge version is ` +
+    `${forgePackage.version}`
+  )
+  process.exit(1)
+}
+
+logHeader('Forge is starting up...')
 
 // default to prototyping, if no mode is specified
 if (mode === undefined || mode === 'prototype') {

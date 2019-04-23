@@ -58,6 +58,7 @@ module.exports = {
   metadata: {
     ...
   },
+  forgeVersion: "4.0.0",
   dirs: {
     pages: './src/pages',
     assets: './src/assets',
@@ -67,6 +68,20 @@ module.exports = {
   }
 }
 ```
+
+### Metadata
+
+This object is merged with the front matter of every page when the page is rendered. It's actually a 3-way merge between the page's front matter (overrides everything), the front matter inherited from the page's layout (takes 2nd priority) and the metadata (takes last priority).
+
+### forgeVersion
+
+The version(s) of `forge` the project is compatible with. Supports all the [options](https://docs.npmjs.com/files/package.json#dependencies) you can use in a `package.json`.
+
+### Dirs
+
+Relative paths to various source directories. These are customizable so you can name the directories whatever you want.
+
+####
 
 ## Notes
 
