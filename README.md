@@ -56,12 +56,14 @@ Expects a file named `forge.config.js` to be in the project directory:
 ```javascript
 module.exports = {
   metadata: {
+    baseurl: '',
     ...
   },
+
   forgeVersion: "4.0.0",
+
   dirs: {
     pages: './src/pages',
-    assets: './src/assets',
     layouts: './src/layouts',
     build: './build',
     scripts: './src/scripts'
@@ -69,9 +71,13 @@ module.exports = {
 }
 ```
 
-### Metadata
+### metadata
 
 This object is merged with the front matter of every page when the page is rendered. It's actually a 3-way merge between the page's front matter (overrides everything), the front matter inherited from the page's layout (takes 2nd priority) and the metadata (takes last priority).
+
+#### baseurl
+
+Optional, prefix to append to beginning of all URLs in production build in case the generated site is not directly under a domain. For example, if you upload the site to `somedomain.com/my-special-site` then `baseurl` should be `/my-special-site`
 
 ### forgeVersion
 
