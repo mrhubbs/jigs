@@ -77,6 +77,30 @@ const makeConfig = mode => {
             { loader: 'css-loader', options: { importLoaders: 1 } },
             { loader: 'postcss-loader', options: { config: { path: path.resolve(__dirname, '../configs') } } }
           ]
+        },
+        // load any image assets into assets/images
+        {
+          test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
+          use: {
+            loader: 'url-loader',
+            query: {
+              limit: 10000,
+              // relative to the output directory
+              name: 'assets/images/[name].[ext]'
+            }
+          }
+        },
+        // load any image assets into assets/fonts
+        {
+          test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
+          use: {
+            loader: 'url-loader',
+            query: {
+              limit: 10000,
+              // relative to the output directory
+              name: 'assets/fonts/[name].[ext]'
+            }
+          }
         }
       ]
     },
