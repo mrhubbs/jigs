@@ -79,6 +79,9 @@ if (mode === 'build') {
     }
   )
 } else if (mode === 'prototype') {
+  // no prefix in prototype mode
+  config.metadata.baseurl = ''
+
   builder.prototype(config)
   .fork(
     // failed
