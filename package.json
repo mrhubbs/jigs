@@ -1,6 +1,6 @@
 {
   "name": "forge",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "Pre-configured stack to build static websites.",
   "repository": {
     "type": "git",
@@ -23,6 +23,7 @@
     "browser-sync": "^2.26.3",
     "chokidar": "^2.1.2",
     "colorette": "^1.0.4",
+    "copy-webpack-plugin": "^5.0.3",
     "crocks": "^0.11.1",
     "css-loader": "^1.0.1",
     "electron-packager": "^13.0.1",
