@@ -7,6 +7,7 @@ const glob = require('glob-all')
 const Webpack = require('webpack')
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
 const PurgecssPlugin = require('purgecss-webpack-plugin')
+const CopyPlugin = require('copy-webpack-plugin')
 
 // To work with purgecss, since tailwind has colons in class names.
 class TailwindExtractor {
@@ -15,7 +16,7 @@ class TailwindExtractor {
   }
 }
 
-const makeConfig = mode => {
+const makeConfig = (mode, forgeConfig) => {
   const __DEV__ = mode === 'development'
   const __PROD__ = mode === 'production'
 
@@ -148,10 +149,9 @@ const makeConfig = mode => {
         // Specify the locations of any files you want to scan for class names.
         paths: glob.sync([
           // TODO: pages, layouts, etc.
-          path.join(process.cwd(), 'src/**/*.js'),
-          path.join(process.cwd(), 'src/**/*.ts'),
-          path.join(process.cwd(), 'src/**/*.vue'),
           path.join(process.cwd(), 'src/**/*.html'),
+          path.join(process.cwd(), 'src/**/*.js'),
+          path.join(process.cwd(), 'src/**/*.vue'),
         ]),
         extractors: [
           {
@@ -159,10 +159,20 @@ const makeConfig = mode => {
 
             // Specify the file extensions to include when scanning for
             // class names.
-            extensions: ['html', 'js', 'ts', 'vue']
+            extensions: ['html', 'js', 'vue']
           }
         ]
-      })
+      }),
+
+      new CopyPlugin([
+        {
+          from: path.join(forgeConfig.dirs.assets, 'images'),
+          to: path.join(
+            path.basename(forgeConfig.dirs.assets),
+            'images'
+          )
+        }
+      ])
     ]
   }
 

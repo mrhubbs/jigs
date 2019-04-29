@@ -70,7 +70,7 @@ if (mode === 'build') {
     // succeeded, build with Webpack if we should
     () => {
       if (webpacker.shouldUse()) {
-        webpacker.build()
+        webpacker.build(config)
         .fork(
           makeLogCall(logFailure, 'something went wrong'),
           makeLogCall(logSuccess, 'done building')
@@ -89,7 +89,7 @@ if (mode === 'build') {
     () => {
       // start Browser Sync, either with or without Webpack running.
       if (webpacker.shouldUse()) {
-        browserSyncer.start(config, webpacker.getMiddleware())
+        browserSyncer.start(config, webpacker.getMiddleware(config))
       } else {
         browserSyncer.start(config)
       }

@@ -64,9 +64,10 @@ module.exports = {
 
   dirs: {
     pages: './src/pages',
+    assets: './src/assets',
     layouts: './src/layouts',
+    scripts: './src/scripts',
     build: './build',
-    scripts: './src/scripts'
   }
 }
 ```
