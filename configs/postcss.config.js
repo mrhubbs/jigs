@@ -31,16 +31,6 @@ let config = {
     require('autoprefixer')({
       'browsers': '> 5%'
     }),
-    // require('postcss-purgecss')({
-    //   'postcss-purgecss': {
-    //     content: [`${dirs.build}/*.html`, `${dirs.build}/**/*.html`],
-    //     css: [`${dirs.build}/*.css`, `${dirs.build}/**/*.css`],
-    //     extractors: [{
-    //       extractor: TailwindExtractor,
-    //       extensions: ['html', 'js']
-    //     }]
-    //   }
-    // }),
     require('postcss-clean')
   ]
 }
