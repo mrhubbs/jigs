@@ -1,6 +1,6 @@
 {
   "name": "forge",
-  "version": "5.1.0",
+  "version": "5.1.1",
   "description": "Pre-configured stack to build static websites.",
   "repository": {
     "type": "git",
