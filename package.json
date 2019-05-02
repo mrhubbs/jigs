@@ -1,6 +1,6 @@
 {
   "name": "forge",
-  "version": "5.0.1",
+  "version": "5.1.0",
   "description": "Pre-configured stack to build static websites.",
   "repository": {
     "type": "git",
@@ -37,11 +37,13 @@
     "highlight.js": "^9.13.1",
     "js-yaml": "^3.12.1",
     "markdown-it": "^8.4.2",
+    "markdown-it-anchor": "^5.0.2",
     "markdown-it-footnote": "^3.0.1",
     "markdown-it-ins": "^2.0.0",
     "markdown-it-mark": "^2.0.0",
     "markdown-it-sub": "^1.0.0",
     "markdown-it-sup": "^1.0.0",
+    "markdown-it-table-of-contents": "^0.4.4",
     "nodemon": "^1.18.10",
     "postcss": "^7.0.2",
     "postcss-clean": "^1.1.0",
