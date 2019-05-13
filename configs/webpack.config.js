@@ -119,9 +119,15 @@ const makeConfig = (mode, forgeConfig) => {
       alias: {
         '@': path.join(__dirname, './src/renderer'),
         'vue$': 'vue/dist/vue.esm.js'
-      }
+      },
+      modules: [
+        // look first in client project for installed node modules
+        path.join(process.cwd(), 'node_modules'),
+        // then look in forge
+        path.join(__dirname, '..', 'node_modules'),
+      ]
     },
-    // teach Webpack to look for loaders in /path/to/forge/node_modules instead
+    // Teach Webpack to look for loaders in /path/to/forge/node_modules instead
     // of /path/to/client-project/node_modules
     // TODO: make sure that loaders installed in client projects still work
     resolveLoader: {
