@@ -1,0 +1,38 @@
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- vendor JS bundle -->
+    <!-- TODO: since this isn't specific to chunk, this could get huge -->
+    <script type="text/javascript" :src="`${baseurl}/scripts/vendors~node_modules.js`"></script>
+
+    <!-- TODO: main JS bundle -->
+    <script type="text/javascript" :src="`${baseurl}/scripts/main.js`"></script>
+
+    <!--
+      In dev mode, we get CSS hot reloading by including the CSS and file and
+      the JS file
+    -->
+    <link v-if="DEV_MODE" rel="stylesheet" :href="`${ baseurl }/css/main.css`" type="text/css">
+    <script v-if="DEV_MODE" type='text/javascript' :src="`${ baseurl }/css/main.js`"></script>
+    <!--
+      In production, we include just the CSS file. The `jigs-inject--
+      --jigs-inject` doo-hickey will replace the filename with the actual
+      hashed filename.
+    -->
+    <link v-if="PROD_MODE" rel="stylesheet" :href="`${ baseurl }/jigs-inject-- css/main.css --jigs-inject`" type="text/css">
+
+    <title>{{ title }} - {{ site.title }}</title>
+  </head>
+
+  <!--
+    NOTE: if we don't have the body here, and put it in layouts, we'll end up
+    with a double, nested body.
+  -->
+  <body class="min-h-screen">
+    <!-- jigs-page-contents -->
+  </body>
+
+</html>

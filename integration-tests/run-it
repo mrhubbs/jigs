@@ -2,4 +2,4 @@
 
 # run interactive
 
-docker run --user tester -it forge-int-test
+docker run --user tester -it jigs-int-test

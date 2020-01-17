@@ -1,8 +1,10 @@
 ---
-layout: blog
+layout: Basepage
 title: The Test md Page
 
 ---
+
+import ExampleComponent from '@components/ExampleComponent.vue'
 
 # Title!
 
@@ -31,7 +33,13 @@ function jump() {
 
 Use a component (this one happens to embed a "live" component tree).
 
-<forge-live-chunk src="/some-bundle.js" mount="#some-mount" />
+<example-component desc='am great!' />
+<example-component desc='am mediocre.' />
+<example-component desc='am so-so.' />
+
+Do I show up?
+
+`<jigs-live-chunk src="/some-bundle.js" mount="#some-mount" />`
 
 Vue variable expansion? (i.e. {{ }} )
   - yeah, gotta do this:
