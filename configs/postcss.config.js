@@ -1,11 +1,4 @@
-const path = require('path')
-
-// expects `dirs` to have a `build` path
-let disabledPlugins = [ ]
-const jigsConfig = require(path.resolve(process.cwd(), 'jigs.config.js'))
-const dirs = jigsConfig.dirs
-
-let config = {
+module.exports = {
   plugins: [
     require('postcss-easy-import')({
       onImport: function(sources) {
@@ -28,26 +21,3 @@ let config = {
     require('postcss-clean')
   ]
 }
-
-// TODO: remove any disabled plugins
-
-// Collect disabled ones into a list.
-// This mechanism allows to flexibly disable plugins in case we need to do so in
-// different build modes.
-disabledPlugins = Object.keys(disabledPlugins).filter((name) => {
-  return disabledPlugins[name] === false
-})
-
-config.plugins = config.plugins.filter((plugin) => {
-  // console.log(plugin, disabledPlugins.includes(plugin))
-  if (typeof(plugin) === 'string' && disabledPlugins.includes(plugin)) return false
-  else if (typeof(plugin) == 'object') {
-    let name = Object.keys(plugin)[0]
-    // keep if it's not in the disabled list, if it's in then don't keep
-    return !disabledPlugins.includes(name)
-  }
-
-  return true
-})
-
-module.exports = config
