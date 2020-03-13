@@ -15,7 +15,7 @@ module.exports = {
     require('postcss-mixins'),
     // When including the tailwind config by filename, the tailwind plugin will
     // watch the .js file and rebuild the CSS if it changes. Nice!
-    require('tailwindcss')('./tailwind.js'),
+    require('tailwindcss')('./tailwind.config.js'),
     // client project should specify browserslist config
     require('autoprefixer')(),
     require('postcss-clean')
