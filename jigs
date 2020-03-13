@@ -1,0 +1,24 @@
+#!/bin/sh
+
+JIGS_PATH=THE_INSTALL_PATH
+
+export JIGS_MODE=development
+RUN_CMD=${1}
+
+if [ "${RUN_CMD}" != "dev" -a "${RUN_CMD}" != "" ]; then
+  export JIGS_MODE=build
+fi
+
+# We want to make sure the project using jigs has it's node_modules folder
+# searched for dependencies. Due to the requirement stack inside Jigs, this
+# folder can get ignored, especially by vue ssr.
+export NODE_PATH=${NODE_PATH}:$(pwd)/node_modules
+# Set up NODE_PATH to include the `node_modules` directory
+# in jigs. We have a lot of dependencies installed there.
+# However, unlike usual, we run from a different directory
+# (the project's).
+export NODE_PATH=${NODE_PATH}:${JIGS_PATH}/node_modules
+
+node ${JIGS_PATH} "${@}"
+
+exit $?

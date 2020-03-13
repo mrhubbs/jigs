@@ -1,4 +1,6 @@
-// NOTE: not only is this a starting point for client eslint configs, it's also directly used by forge to lint a project's page templates.
+// NOTE: not only is this a starting point for client eslint configs, it's also directly used by jigs to lint a project's page templates.
+
+const path = require('path')
 
 module.exports = {
   // tell eslint this file is in the project root - don't search for
@@ -17,6 +19,10 @@ module.exports = {
   env: {
     node: true,
   },
+  plugins: [
+    // TODO: have to install this as a package in order for ESLint to find it???
+    // 'jigs'
+  ],
   extends: [
     'eslint:recommended',
     // lint .vue files!

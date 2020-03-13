@@ -1,104 +1,171 @@
 
-const path = require('path')
+import path from 'path'
 
-const semver = require('semver')
+import semver from 'semver'
+import { createServer } from 'http-server'
 
-import { logFailure, logHeader, logSuccess, makeLogCall } from './lib/logging'
-const forgePackage = require('./package.json')
+import { logFailure, logHeader, logInfo } from './lib/logging'
+const jigsPackage = require('./package.json')
 
-// Determine run mode from CLI
-let mode = process.argv[2]
+// Determine run command from CLI arguments
+let runCmd = process.argv[2]
 const args_and_options = process.argv.slice(2)
 
 if (args_and_options.includes('-v') || args_and_options.includes('--version')) {
-  console.log(forgePackage.version)
+  console.log(jigsPackage.version)
   process.exit(0)
 }
-
-// We have a lot of tooling installed in the forge directory's node_modules
-// folder. However, unlike usual tooling, we run from a different directory (the
-// project's). So we add to the NODE_PATH so we can find all the tooling.
-process.env.NODE_PATH = path.resolve(path.join(__dirname, 'node_modules'))
-require('module').Module._initPaths()
 
 // initialize a new project
 // (do this before anything else because we try to load a config below, and a
 // new, empty project won't have a config)
-if (mode === 'init') {
+if (runCmd === 'init') {
   require('./lib/initer')()
-  logHeader('Done initializing new forge project')
+  logHeader('Done initializing new jigs project')
   process.exit(0)
 }
 
+// default to development, if no runCmd is specified
+if (runCmd === undefined || runCmd === 'dev') {
+  runCmd = 'development'
+}
+
+const runMode = runCmd === 'development' ? 'development' : 'production'
+
+const Async = require('crocks/Async')
+
 // load the configuration
-const config = require('./lib/config').load()
+const config = require('./lib/config').load(runMode)
 const builder = require('./lib/builder')
-const layouts = require('./lib/builder/layouts')
 const webpacker = require('./lib/webpacker')
-const browserSyncer = require('./lib/browserSyncer')
+const { runDevServerInWatch } = require('./lib/dev-server')
 const ePackager = require('./lib/e--packager')
 
-// check compatibility between forge and the client project
-if (!semver.satisfies(forgePackage.version, config.forgeVersion)) {
+// check compatibility between jigs and the client project
+if (!semver.satisfies(jigsPackage.version, config.jigsVersion)) {
   logFailure(
     `The client project ${path.basename(process.cwd())} requires version ` +
-    `${config.forgeVersion} of forge, but the forge version is ` +
-    `${forgePackage.version}`
+    `${config.jigsVersion} of jigs, but the jigs version is ` +
+    `${jigsPackage.version}`
   )
   process.exit(1)
 }
 
-logHeader('Forge is starting up...')
-
-// default to prototyping, if no mode is specified
-if (mode === undefined || mode === 'prototype') {
-  mode = 'prototype'
-}
+logHeader('Jigs is starting up...')
 
 // now, vee build! (or prototype... or something else...)
-if (mode === 'build') {
-  // We must build the site first. It matters because Webpack will kick off
-  // PostCSS build which needs to scan generated HTML and JS, so the site has to
-  // be rendered first AND PostCSS can't fully kick off until Webpack has built
-  // the JS.
-  // TODO: Chain the tasks instead of nesting. How do you do that functionally?
+if (runCmd === 'build') {
   builder.cleanBuild(config)
-  .chain(() => builder.build(config))
+  // write the routes
+  .chain(() =>
+    Async
+      .of(builder.writeGeneratedRoutes(config))
+      .ap(Async.Resolved(builder.generateRoutes(config)))
+  )
+  // Run the client and server builds in parallel.
+  .chain(routeData => {
+    logHeader('Building front-end\n')
+    return Async.all([
+      Async.Resolved(routeData),  // pass this through
+      webpacker.build(config, 'production', 'client'),
+      webpacker.build(config, 'production', 'server')
+    ])
+  })
+  .chain(([ [ routes ] ]) => {
+    logHeader('Generating HTML pages\n')
+    // the route template comes second, remove it
+    routes = routes.map(e => [ e[0], e[2] ])
+    builder.generateAndWritePages(config, routes)
+    return Async.Resolved(1)
+  })
   .fork(
-    // failed
-    logFailure,
-    // succeeded, build with Webpack if we should
     () => {
-      if (webpacker.shouldUse()) {
-        webpacker.build(config)
-        .fork(
-          makeLogCall(logFailure, 'something went wrong'),
-          makeLogCall(logSuccess, 'done building')
+      logFailure('something went wrong, there should be a more helpful error message above\n')
+      process.exit(1)
+    },
+    () => { }
+  )
+} else if (runCmd === 'development') {
+  builder.cleanBuild(config)
+  .chain(() =>
+    Async
+      .of(builder.writeGeneratedRoutes(config))
+      .ap(
+        Async.Resolved(
+          // decide whether or not to start with all routes rendered
+          config.preBuildPages
+          ?
+          builder.generateRoutes(config)
+          :
+          null
         )
+      )
+  )
+  // Run the client and server builds in parallel, starting up the dev server
+  // when they finish. (They are run in watch mode, so they will keep
+  // running...)
+  .chain(routeData => {
+    logHeader('Building front-end (HMR)\n')
+    return Async.all([
+      Async.Resolved(routeData),  // pass this through
+      webpacker.develop(config, 'development', 'client'),
+      webpacker.buildWatch(config, 'development', 'server')
+    ])
+  })
+  .fork(
+    () => {
+      logFailure('something went wrong, there should be a more helpful error message above\n')
+      process.exit(1)
+    },
+    ([ routeData ]) => {
+      // run webpack in dev mode for hot reloading
+      // webpacker.develop(config)
+      // also start up a server to handle the bundle rendering
+      runDevServerInWatch(config, routeData[0])
+    }
+  )
+} else if (runCmd === 'serve') {
+  createServer({
+    root: config.dirs.buildRoot
+  })
+  .listen(
+    config.staticServer.port,
+    config.staticServer.host,
+    err => {
+      if (err) {
+        logFailure(err)
+      } else {
+        const host = [ '127.0.0.1', '0.0.0.0'].includes(config.staticServer.host)
+        ?
+        'localhost'
+        :
+        config.staticServer.host
+
+        logInfo(`Serving on http://${host}:${config.staticServer.port}${config.metadata.baseurl}`)
       }
     }
   )
-} else if (mode === 'prototype') {
-  // no prefix in prototype mode
-  config.metadata.baseurl = ''
-
-  builder.prototype(config)
-  .fork(
-    // failed
-    logFailure,
-    () => {
-      // start Browser Sync, either with or without Webpack running.
-      if (webpacker.shouldUse()) {
-        browserSyncer.start(config, webpacker.getMiddleware(config))
-      } else {
-        browserSyncer.start(config)
+} else if (runCmd === 'test') {
+  // run jest and exit
+  require('child_process')
+    .spawnSync(
+      'npx', [
+        'jest',
+        ...process.argv.slice(2)
+      ], {
+        stdio: 'inherit',
+        // child process inherits environment
+        env: process.env
+      },
+      err => {
+        if (err.code) {
+          process.exit(err.code)
+        }
       }
-  })
-} else if (mode === 'layouts') {
-  layouts.handleCommand(config, process.argv.slice(3))
-} else if (mode === 'pkg-e-') {
+    )
+} else if (runCmd === 'pkg-e-') {
   ePackager(config)
 } else {
-  logFailure(`Unknown mode "${mode}"`)
+  logFailure(`Unknown run command "${runCmd}"`)
   process.exit(1)
 }
