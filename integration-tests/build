@@ -1,11 +1,11 @@
 #!/bin/sh
 
 # clean up
-rm -rf built-forge
+rm -rf built-jigs
 # copy all these files so they are available to the docker build context
-mkdir -p built-forge/build
-cp -r ../build built-forge/
-cp -r ../{package*.json,configs,install-forge,forge} built-forge/
+mkdir -p built-jigs/build
+cp -r ../build built-jigs/
+cp -r ../{package*.json,configs,install-jigs,jigs,launch.js} built-jigs/
 
 # build container
-docker build -t forge-int-test .
+docker build -t jigs-int-test .

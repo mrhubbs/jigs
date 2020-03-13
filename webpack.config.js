@@ -1,5 +1,5 @@
 
-// Webpack configuration for the forge CLI tool.
+// Webpack configuration for the jigs CLI tool.
 
 const path = require('path')
 
@@ -7,17 +7,26 @@ const Webpack = require('webpack')
 const nodeExternals = require('webpack-node-externals')
 
 const __DEV__ = process.env.NODE_ENV !== 'production'
-const __PROD__ = process.env.NODE_ENV === 'production'
+const __PROD__ = !__DEV__
 
 let config = {
   mode: __DEV__ ? 'development' : 'production',
   entry: {
-    index: './index.js'
+    index: './index.js',
+    'jigs-page-loader': './lib/builder/jigs-build-webpack/page-loader',
+    'jigs-page-post': './lib/builder/jigs-build-webpack/page-post'
+  },
+  optimization: {
+    // Don't replace process.env.NODE_ENV with Webpack's mode.
+    // Want jigs to be able to set it as it sees fit, regardless of how the
+    // bundle was built by Webpack.
+    nodeEnv: false,
   },
   output: {
     publicPath: '/',
     path: path.resolve(__dirname, './build'),
-    filename: '[name].js'
+    filename: '[name].js',
+    libraryTarget: 'commonjs2'
   },
   devtool: 'cheap-source-map',
   module: {

@@ -1,18 +1,24 @@
 
 const path = require('path')
-const forgeConfig = require('./forge.config.js')
+const jigsConfig = require('./jigs.config.js')
 
 // Try the environment variable, otherwise use root
 const ASSET_PATH = process.env.ASSET_PATH || '/';
 
 let config = {
   entry: {
-    main: path.resolve(forgeConfig.dirs.scripts, 'main.js')
+    './scripts/main': path.resolve(jigsConfig.dirs.scripts, 'main.js'),
+    './css/main': path.resolve(jigsConfig.dirs.css, 'main.css')
   },
   output: {
     publicPath: ASSET_PATH,
-    path: path.resolve(__dirname, path.join(forgeConfig.dirs.build, forgeConfig.dirs.scripts)),
+    path: path.resolve(jigsConfig.dirs.build),
     filename: '[name].js'
+  },
+  resolve: {
+    alias: {
+      '@components': path.resolve(jigsConfig.dirs.src, 'components')
+    }
   }
 }
 

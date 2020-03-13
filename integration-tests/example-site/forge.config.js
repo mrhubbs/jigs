@@ -5,12 +5,24 @@ module.exports = {
     }
   },
   // NOTE: this is overwritten by the container build process
-  forgeVersion: '',
+  jigsVersion: '7.0.0',
   dirs: {
-    pages: './src/pages',
+    build: './build',
+    src: './src',
     assets: './src/assets',
     layouts: './src/layouts',
-    build: './build',
-    scripts: './src/scripts'
-  }
+    pages: './src/pages',
+    scripts: './src/scripts',
+    css: './src/css'
+  },
+
+  toc: {
+    wrapper:
+`<div class='table-of-contents'>
+  <h2>Table of Contents</h2>
+  [[toc]]
+</div>`
+  },
+
+  rootTemplate: './src/layouts/root.html'
 }
