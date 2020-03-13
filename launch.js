@@ -13,7 +13,7 @@ if (jetpack.exists('./jigs.config.js')) {
 }
 
 // set NODE_ENV according to the JIGS_MODE
-// TODO: sometimes, for an app with a back-end, "forge build" may be used to
+// TODO: sometimes, for an app with a back-end, "jigs build" may be used to
 // build a dev site, so we shouldn't hard-code the NODE_ENV here.
 if (process.env.JIGS_MODE === 'build') {
   process.env.NODE_ENV = 'production'
