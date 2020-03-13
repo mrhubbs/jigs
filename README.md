@@ -1,17 +1,37 @@
-# Jigs
+🚧 **This is an experimental project in early development.** 🚧
 
-Originally inspired by [Metalsmith](http://metalsmith.io), it's a stack to build static websites.
+In carpentry, a jig is a thing you make to help you make the thing you're making. One example would be a frame or clamp setup to help cut wood consistently. As such, a jig _empowers efficient craftsmanship_.
 
-This is tailored towards these tools:
+Jigs is a CLI program to build static sites, PWAs and Electron apps. It's tailored to my preferred front-end stack:
 
-  - [Vue](https://vuejs.org) templates/layouts
-  - [PostCSS](https://postcss.org) with plugins to emulate SASS + [TailwindCSS](https://tailwindcss.com)
+  - [Vue](https://vuejs.org)
+  - [PostCSS](https://postcss.org) with plugins to behave like SASS + [TailwindCSS](https://tailwindcss.com)
   - [Webpack](https://webpack.js.org)
   - [markdown-it](https://github.com/markdown-it/markdown-it)
+  - [Jest](https://jestjs.io/)
 
-## Usage
+# Why?
 
-Development (watch mode):
+That's a kind of a long story&hellip; Part of it is that I got sick of installing the same build tooling on my system, over-and-over, and I got sick of maintaining it in different projects, over-and-over.
+
+Jigs is installed globally and can build a variety of projects. Simpler projects won't even need a `node_modules` folder.
+
+I'm experimenting to see just how far I can take this. It could get sticky if some projects require different versions of dependencies than the ones built into the current version of Jigs. However, the way Jigs sets up pathing, any modules installed into a project will override those installed in Jigs.
+
+# Installation
+
+*Linux/Mac only, Windows support comming&hellip;*
+
+```shell
+# clone this repo to your machine
+npm i --production
+npm run build
+./install-jigs
+```
+
+# Development
+
+*watch mode*
 
 ```shell
 cd project-directory
@@ -20,65 +40,34 @@ jigs
 jigs dev
 ```
 
-Building (production):
+# Building
+
+*production mode*
 
 ```shell
 cd project-directory
 jigs build
 ```
 
-## Installation
+# Project Scaffolding
 
 ```shell
-./build-jigs && ./install-jigs
+cd project-directory
+jigs init
 ```
-
-## Terminology
-
-**Project:** A project that used Jigs as a build/development tools.
-
-## Installation
-
-Install [nodemon](https://www.npmjs.com/package/nodemon).
-
-Clone this repo.
-
-TODO:
-
-... add it to your path and make it executable.
-
-## Configuration
-
-### metadata
-
-This object is merged with the front matter of every page when the page is rendered. It's actually a 3-way merge between the page's front matter (overrides everything), the front matter inherited from the page's layout (takes 2nd priority) and the metadata (takes last priority).
-
-#### baseurl
-
-Optional, prefix to append to beginning of all URLs in production build in case the generated site is not directly under a domain. For example, if you upload the site to `somedomain.com/my-special-site` then `baseurl` should be `/my-special-site`
-
-### jigsVersion
-
-The version(s) of `jigs` the project is compatible with. Supports all the [options](https://docs.npmjs.com/files/package.json#dependencies) you can use in a `package.json`.
-
-### Dirs
-
-Relative paths to various source directories. These are customizable so you can name the directories whatever you want.
-
-####
-
-## Notes
-
-### Prototype Mode
-
-...
 
 ## To-Do
 
   1. Code errors are being logged twice?
 
+  1. Try MDX's vue-loader.
+
   1. Not returning exit code in launch.js
 
   1. Figure out how to embed source-code highlighting styles.
 
-  1. Consider how to handle jigs verses client tooling. Right now I'm leaning towards installing everything (Webpack, Babel, ESlint, etc.) in jigs and only installing custom plugins in the client projects. How much configuration should be client-specific? .babelrc? .eslintrc? etc...
+  1. Document `jigs.config.js`
+
+  1. Document `jigs init`
+
+  1. Document everything
